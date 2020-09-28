@@ -3,6 +3,7 @@ package config
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 )
@@ -13,6 +14,7 @@ var (
 )
 
 func Load() {
+	fmt.Println("load")
 	workingDir, _ := os.Getwd()
 
 	file, err := os.Open(workingDir + "/config.json")
@@ -40,6 +42,7 @@ func Load() {
 	if toJsonErr != nil {
 		panic(toJsonErr)
 	}
+	isLoad = true
 }
 
 func Read(key string) interface{} {
