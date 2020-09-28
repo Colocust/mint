@@ -1,4 +1,4 @@
-package tool
+package config
 
 import (
 	"bufio"
