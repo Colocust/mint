@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/tiny-task.iml" filepath="$PROJECT_DIR$/.idea/tiny-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/tiny-tq.iml" filepath="$PROJECT_DIR$/.idea/tiny-tq.iml" />
     </modules>
   </component>
 </project>

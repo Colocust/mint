@@ -13,9 +13,9 @@ var (
 )
 
 func Load() {
-	workingDir, _ := os.Getwd()
+	workDir, _ := os.Getwd()
 
-	file, err := os.Open(workingDir + "/config.json")
+	file, err := os.Open(workDir + "/config.json")
 	if err != nil {
 		panic(err)
 	}

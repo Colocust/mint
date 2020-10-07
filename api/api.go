@@ -1,7 +1,8 @@
 package api
 
-import "net/http"
-
-func Run(request *http.Request) {
-
+type Request struct {
+	Url      string                 `json:"url"`
+	Data     map[string]interface{} `json:"data"`
+	Method   string                 `json:"method"`
+	Duration int64                  `json:"duration"`
 }

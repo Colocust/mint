@@ -6,10 +6,11 @@ import (
 	"tiny-tq/server"
 )
 
-func init()  {
+func init() {
 	//加载配置文件
 	config.Load()
 }
+
 func main() {
 	http.HandleFunc("/", server.Runner)
 
