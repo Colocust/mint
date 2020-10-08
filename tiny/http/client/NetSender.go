@@ -11,16 +11,16 @@ type NetSender struct {
 	builder NetBuilder
 }
 
-func (n *NetSender) Post() (response string, err error) {
-	requestPost, err := http.NewRequest(http.MethodPost, n.builder.Url,
+func (n *NetSender) Send(method string) (response string, err error) {
+	request, err := http.NewRequest(method, n.builder.Url,
 		bytes.NewReader([]byte(n.builder.Content)))
 	if err != nil {
 		return
 	}
 
-	requestPost.Header = n.builder.Header
+	request.Header = n.builder.Header
 
-	resp, err := http.DefaultClient.Do(requestPost)
+	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return
 	}
@@ -39,4 +39,3 @@ func (n *NetSender) Post() (response string, err error) {
 
 	return
 }
-

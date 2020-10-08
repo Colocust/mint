@@ -2,8 +2,8 @@ package main
 
 import (
 	"net/http"
-	"tiny-tq/config"
-	"tiny-tq/server"
+	"tiny-tq/tiny/config"
+	"tiny-tq/tiny/http/server"
 )
 
 func init() {

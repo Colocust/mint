@@ -3,14 +3,13 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-	"tiny-tq/api"
-	http_ "tiny-tq/http"
-	"tiny-tq/route"
+	"tiny-tq/src/api"
+	"tiny-tq/src/parameter"
 )
 
 func Runner(writer http.ResponseWriter, request *http.Request) {
-	var ret http_.Response
-	req := new(api.Request)
+	var ret parameter.Response
+	req := new(parameter.Request)
 
 	body := make([]byte, request.ContentLength)
 	_, _ = request.Body.Read(body)
@@ -18,18 +17,18 @@ func Runner(writer http.ResponseWriter, request *http.Request) {
 
 	isValidReq := validateReq(*req)
 	if !isValidReq {
-		ret = http_.Response{Code: http_.ARGS, Message: "Wrong Args"}
+		ret = parameter.Response{Code: http.StatusUnsupportedMediaType, Message: "Wrong Args"}
 		goto End
 	}
 
 	switch request.URL.String() {
 
-	case route.Ticker:
+	case Ticker:
 		go api.Ticker(*req)
-		ret = http_.Response{Code: http_.SUCCESS, Message: "OK"}
+		ret = parameter.Response{Code: http.StatusOK, Message: "OK"}
 
 	default:
-		ret = http_.Response{Code: http_.ERROR, Message: "Wrong Route"}
+		ret = parameter.Response{Code: http.StatusInternalServerError, Message: "Wrong Route"}
 		break
 	}
 
@@ -38,7 +37,7 @@ End:
 	_, _ = writer.Write(result)
 }
 
-func validateReq(request api.Request) bool {
+func validateReq(request parameter.Request) bool {
 	if request.Url == "" {
 		return false
 	}
