@@ -1,1 +1,1 @@
-# tiny-task
+# tinyQ

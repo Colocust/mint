@@ -3,11 +3,11 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-	"tiny-tq/src/api"
-	"tiny-tq/src/parameter"
+	"tinyQ/src/api"
+	"tinyQ/src/parameter"
 )
 
-func Runner(writer http.ResponseWriter, request *http.Request) {
+func Runner() {
 	var ret parameter.Response
 	req := new(parameter.Request)
 

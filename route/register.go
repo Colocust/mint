@@ -1,9 +1,9 @@
 package route
 
 import (
-	"tinyQ/http/server"
+	"tinyQ/api"
 )
 
 func Register(router *Router) {
-	router.Post("/api/Ticker", server.Runner)
+	router.Post("/api/Ticker", api.Ticker)
 }
