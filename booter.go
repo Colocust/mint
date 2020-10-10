@@ -1,0 +1,6 @@
+package tinyQ
+
+
+func Boot() {
+
+}
