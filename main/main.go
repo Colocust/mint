@@ -1,13 +1,15 @@
 package main
 
 import (
+	"mint/config"
+	"mint/route"
+	"mint/task"
 	"net/http"
-	"tinyQ/config"
-	"tinyQ/route"
 )
 
 func init() {
 	config.Load()
+	task.Boot()
 }
 
 type (
@@ -15,26 +17,25 @@ type (
 		Ip     string
 		Port   string
 		Router *route.Router
-		Server *http.Server
 	}
 )
 
 func NewApp() *App {
+	ip := config.Read("ip").(string)
+	port := config.Read("port").(string)
 	return &App{
-		Ip:     "127.0.0.1",
-		Port:   "8899",
+		Ip:     ip,
+		Port:   port,
 		Router: route.NewRouter(),
 	}
 }
 
 func (app *App) Run() error {
-	if app.Server == nil {
-		app.Server = &http.Server{
-			Addr:    app.Ip + ":" + app.Port,
-			Handler: app.Router,
-		}
+	server := &http.Server{
+		Addr:    app.Ip + ":" + app.Port,
+		Handler: app.Router,
 	}
-	err := app.Server.ListenAndServe()
+	err := server.ListenAndServe()
 	return err
 }
 

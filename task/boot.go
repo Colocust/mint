@@ -1,0 +1,6 @@
+package task
+
+
+func Boot() {
+
+}
