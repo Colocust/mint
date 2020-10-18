@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	HandlerFunc func(*task.AddTaskRequest) interface{}
+	HandlerFunc func(*task.AddTaskRequest) *task.AddTaskResponse
 
 	Router struct {
 		route map[string]map[string]HandlerFunc
