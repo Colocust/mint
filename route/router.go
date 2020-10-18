@@ -2,29 +2,28 @@ package route
 
 import (
 	"encoding/json"
+	"mint/task"
 	"net/http"
 	"strings"
-	"tinyQ/http/server"
 )
 
 type (
-	HandlerFunc func(req *http.Request) server.Response
+	HandlerFunc func(*task.AddTaskRequest) interface{}
 
 	Router struct {
 		route map[string]map[string]HandlerFunc
 	}
 )
 
-func NewRouter() *Router {
-	return new(Router)
-}
-
 func (r *Router) ServeHTTP(writer http.ResponseWriter, req *http.Request) {
-	f, ok := r.route[req.Method][req.URL.String()]
-	if ok {
-		response := f(req)
+	if f, ok := r.route[req.Method][req.URL.String()]; ok {
+		decoder := json.NewDecoder(req.Body)
+		params := new(task.AddTaskRequest)
+		decoder.Decode(params)
 
-		data, _ := json.Marshal(response)
+		resp := f(params)
+
+		data, _ := json.Marshal(resp)
 		writer.Write(data)
 	} else {
 		writer.WriteHeader(http.StatusNotFound)
