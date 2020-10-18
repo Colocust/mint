@@ -9,7 +9,7 @@ import (
 
 func init() {
 	config.Load()
-	task.Boot()
+	go task.Boot()
 }
 
 type (
