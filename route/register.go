@@ -1,9 +1,13 @@
 package route
 
 import (
-	"tinyQ/api"
+	"mint/task"
 )
 
 func Register(router *Router) {
-	router.Post("/api/Ticker", api.Ticker)
+	router.Post("/task/add", task.Add)
+}
+
+func NewRouter() *Router {
+	return new(Router)
 }
