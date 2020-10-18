@@ -6,7 +6,7 @@
 	 	
 	request:
 		url  string requeired
-		data interfaces{} required
+		data interface{} required
 	response:
 		code    int required
 		message string required
