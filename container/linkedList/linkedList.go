@@ -7,7 +7,7 @@ type (
 		size int
 	}
 	Node struct {
-		value interface{}
+		Value interface{}
 		prev  *Node
 		next  *Node
 	}
@@ -34,7 +34,7 @@ func (l *LinkedList) Add(index int, value interface{}) error {
 	}
 
 	node := new(Node)
-	node.value = value
+	node.Value = value
 
 	prev := l.head
 	for i := 0; i < index-1; i++ {
@@ -48,7 +48,7 @@ func (l *LinkedList) Add(index int, value interface{}) error {
 }
 
 func (l *LinkedList) Push(value interface{}) {
-	node := &Node{value: value}
+	node := &Node{Value: value}
 	if l.size == 0 {
 		l.head, l.tail = node, node
 	} else {
@@ -59,7 +59,7 @@ func (l *LinkedList) Push(value interface{}) {
 }
 
 func (l *LinkedList) Unshift(value interface{}) {
-	node := &Node{value: value}
+	node := &Node{Value: value}
 	if l.size == 0 {
 		l.head, l.tail = node, node
 	} else {
@@ -75,7 +75,12 @@ func (l *LinkedList) Pop() (*Node, error) {
 		return nil, err
 	}
 	node := l.tail
-	node.prev.next, l.tail, node.prev = nil, node.prev, nil
+	prev := node.prev
+	if prev == nil {
+		l.head, l.tail = nil, nil
+	} else {
+		node.prev.next, l.tail, node.prev = nil, node.prev, nil
+	}
 
 	l.size--
 	return node, nil
@@ -87,7 +92,12 @@ func (l *LinkedList) Shift() (*Node, error) {
 		return nil, err
 	}
 	node := l.head
-	node.next.prev, l.head, node.next = nil, node.next, nil
+	next := node.next
+	if next == nil {
+		l.head, l.tail = nil, nil
+	} else {
+		next.prev, l.head, node.next = nil, node.next, nil
+	}
 
 	l.size--
 	return node, nil
@@ -116,18 +126,6 @@ func (l *LinkedList) Remove(index int) (*Node, error) {
 
 	l.size--
 	return next, nil
-}
-
-func (l *LinkedList) foreach() []int {
-	var results []int
-
-	current := l.head
-	for current != nil {
-		results = append(results, current.value.(int))
-		current = current.next
-	}
-
-	return results
 }
 
 func (l *LinkedList) Size() int {
