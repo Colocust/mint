@@ -39,7 +39,6 @@ func Load() {
 	if toJsonErr != nil {
 		panic(toJsonErr)
 	}
-	isLoad = true
 }
 
 func Read(key string) interface{} {
