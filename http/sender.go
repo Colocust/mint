@@ -1,0 +1,43 @@
+package http
+
+import (
+	"bytes"
+	"errors"
+	"io/ioutil"
+	"net/http"
+)
+
+type Sender struct {
+	builder *Builder
+}
+
+func (s *Sender) Send(method string) (response string, err error) {
+	request, err := http.NewRequest(method, s.builder.Url,
+		bytes.NewReader([]byte(s.builder.Content)))
+	if err != nil {
+		return
+	}
+
+	resp, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		err = errors.New(resp.Status)
+		return
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bodyContent, err := ioutil.ReadAll(resp.Body)
+	response = string(bodyContent)
+
+	return
+}
+
+func NewSender(b *Builder) *Sender {
+	return &Sender{builder: b}
+}
