@@ -2,6 +2,12 @@ package route
 
 import (
 	"mint/api"
+	"sync"
+)
+
+var (
+	instance *Router
+	once     sync.Once
 )
 
 type (
@@ -13,16 +19,16 @@ type (
 
 func (r *Router) Handle(request []string) *api.Response {
 	if len(request) <= 1 {
-		res := api.NewResponse(api.StatusArgsError, "Wrong Args")
-		return res
+		resp := api.NewResponse(api.StatusArgsError, "Wrong Args")
+		return resp
 	}
 
 	if f, ok := r.route[request[0]]; ok {
-		res := f(request[1:])
-		return res
+		resp := f(request[1:])
+		return resp
 	}
-	response := api.NewResponse(api.StatusNotFound, "Wrong API")
-	return response
+	resp := api.NewResponse(api.StatusNotFound, "Wrong API")
+	return resp
 }
 
 func (r *Router) Add(path string, handler HandlerFunc) {
@@ -32,6 +38,10 @@ func (r *Router) Add(path string, handler HandlerFunc) {
 	r.route[path] = handler
 }
 
-func NewRouter() *Router {
-	return new(Router)
+func GetInstance() *Router {
+	once.Do(func() {
+		instance = new(Router)
+		Register(instance)
+	})
+	return instance
 }
