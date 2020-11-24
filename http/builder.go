@@ -1,18 +1,26 @@
 package http
 
 type Builder struct {
-	Url     string
-	Content string
+	url     string
+	content string
 }
 
-func (b *Builder) setUrl(url string) *Builder {
-	b.Url = url
+func (b *Builder) SetUrl(url string) *Builder {
+	b.url = url
 	return b
 }
 
-func (b *Builder) setContent(content string) *Builder {
-	b.Content = content
+func (b *Builder) SetContent(content string) *Builder {
+	b.content = content
 	return b
+}
+
+func (b *Builder) GetContent() string {
+	return b.content
+}
+
+func (b *Builder) GetUrl() string {
+	return b.url
 }
 
 func NewBuilder() *Builder {

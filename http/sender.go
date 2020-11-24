@@ -11,9 +11,9 @@ type Sender struct {
 	builder *Builder
 }
 
-func (s *Sender) Send(method string) (response string, err error) {
-	request, err := http.NewRequest(method, s.builder.Url,
-		bytes.NewReader([]byte(s.builder.Content)))
+func (s *Sender) Send(method string) (result string, err error) {
+	request, err := http.NewRequest(method, s.builder.GetUrl(),
+		bytes.NewReader([]byte(s.builder.GetContent())))
 	if err != nil {
 		return
 	}
@@ -33,7 +33,7 @@ func (s *Sender) Send(method string) (response string, err error) {
 	}()
 
 	bodyContent, err := ioutil.ReadAll(resp.Body)
-	response = string(bodyContent)
+	result = string(bodyContent)
 
 	return
 }
