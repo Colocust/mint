@@ -2,15 +2,19 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
+	"mint/api"
 	"mint/config"
+	"mint/route"
 	"net"
+	"strings"
 )
 
-//开启tcp服务
-//接收处理
-//暂时一个处理开一个协程
+func init() {
+	go api.Consume()
+}
+
+//在消息生产后通知消费者来消费
 func main() {
 	address := config.Read("host").(string) + ":" + config.Read("port").(string)
 	ln, err := net.Listen("tcp", address)
@@ -18,27 +22,29 @@ func main() {
 		panic(err)
 	}
 	for {
-		conn, e := ln.Accept()
-		if e != nil {
-			log.Printf("accept err: %v", e)
-			return
-		}
-		go handleConn(conn)
+		conn, _ := ln.Accept()
+		go run(conn)
 	}
 }
 
-func handleConn(conn net.Conn) {
-	defer conn.Close()
-	body := make([]byte, 1024)
+func run(conn net.Conn) {
+	defer func() {
+		_ = conn.Close()
+		log.Println(conn.RemoteAddr().String() + "断开连接")
+	}()
 	for {
+		body := make([]byte, 1024)
 		length, err := conn.Read(body)
 		if err != nil {
 			break
 		}
-		fmt.Println(string(body))
-		req := make(map[string]interface{})
-		json.Unmarshal(body[:length], &req)
-		fmt.Println(req["host"])
+		request := strings.Split(string(body[:length]), " ")
+		resp := route.GetInstance().Handle(request)
+		b, _ := json.Marshal(resp)
+
+		_, err = conn.Write(b)
+		if err != nil {
+			log.Println(err.Error())
+		}
 	}
-	fmt.Println("断开连接")
 }

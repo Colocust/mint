@@ -1,27 +1,42 @@
-package message
+package mq
 
-import "mint/container/queue"
+import (
+	"mint/container/linkedList"
+	"sync"
+)
 
 type (
-	MQ struct {
-		*queue.Queue
+	MessageQueue struct {
+		*linkedList.LinkedList
 	}
 	Message struct {
-		Url       string
-		Content   string
+		Url       string `json:"url"`
+		Content   string `json:"content"`
 		RetryTime int
 	}
 )
 
-func NewQueue() *MQ {
-	return new(MQ)
+var (
+	instance *MessageQueue
+	once     sync.Once
+)
+
+func GetInstance() *MessageQueue {
+	once.Do(func() {
+		l := linkedList.NewLinkedList()
+		instance = &MessageQueue{l}
+	})
+	return instance
 }
 
-func (q *MQ) Product(m Message) {
-	q.EnQueue(m)
+func (mq *MessageQueue) Product(m *Message) {
+	mq.Push(m)
 }
 
-func (q *MQ) Consume() Message {
-	m := q.DeQueue()
-	return m.(Message)
+func (mq *MessageQueue) Consume() *Message {
+	node, err := mq.Shift()
+	if err != nil {
+		return nil
+	}
+	return node.Value.(*Message)
 }
