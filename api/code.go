@@ -1,5 +1,8 @@
-package main
+package api
 
-func main() {
-	$END$
-}
+const (
+	StatusSuccess   = 200
+	StatusNotFound  = 404
+	StatusArgsError = 415
+)
+

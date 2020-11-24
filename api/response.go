@@ -1,8 +1,8 @@
-package server
+package api
 
 type Response struct {
-	Code    int
-	Message string
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
 func NewResponse(code int, message string) *Response {
