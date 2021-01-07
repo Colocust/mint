@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"mint/config"
 	"mint/http"
-	"mint/mq"
+	"mint/task"
 	http2 "net/http"
 	"sync"
 )
@@ -19,7 +19,7 @@ func init() {
 }
 
 func Add(request []string) *Response {
-	content, m := request[0], new(mq.Message)
+	content, m := request[0], new(task.Message)
 
 	err := json.Unmarshal([]byte(content), m)
 	if err != nil {
@@ -27,14 +27,14 @@ func Add(request []string) *Response {
 	}
 
 	mutex.Lock()
-	mq.GetInstance().Product(m)
+	task.GetInstance().Product(m)
 	mutex.Unlock()
 
 	return NewResponse(StatusSuccess, "Success")
 }
 
 func Consume() {
-	instance := mq.GetInstance()
+	instance := task.GetInstance()
 	for {
 		mutex.Lock()
 		m := instance.Consume()
@@ -53,7 +53,7 @@ func Consume() {
 			if m.RetryTime < retryMaxTime {
 				m.RetryTime++
 				mutex.Lock()
-				mq.GetInstance().Product(m)
+				task.GetInstance().Product(m)
 				mutex.Unlock()
 			}
 		}

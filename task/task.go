@@ -1,4 +1,4 @@
-package mq
+package task
 
 import (
 	"mint/container/linkedList"
