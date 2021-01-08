@@ -1,4 +1,4 @@
-package task
+package job
 
 import (
 	"mint/container/linkedList"

@@ -1,5 +1,3 @@
-package main
+package job
 
-func main() {
-	$END$
-}
+

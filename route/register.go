@@ -2,6 +2,6 @@ package route
 
 import "mint/api"
 
-func Register(r *Router) {
-	r.Add("add", api.Add)
+func Register(router *Router) {
+	router.Add("add", api.Add)
 }

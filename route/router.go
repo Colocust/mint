@@ -1,7 +1,7 @@
 package route
 
 import (
-	"mint/api"
+	"mint/http/server"
 	"sync"
 )
 
@@ -11,23 +11,24 @@ var (
 )
 
 type (
-	HandlerFunc func([]string) *api.Response
+	HandlerFunc func([]string, *server.Response)
 	Router      struct {
 		route map[string]HandlerFunc
 	}
 )
 
-func (r *Router) Handle(request []string) *api.Response {
+func (r *Router) Handle(request []string) *server.Response {
 	if len(request) <= 1 {
-		resp := api.NewResponse(api.StatusArgsError, "Wrong Args")
+		resp := server.NewResponse(server.StatusArgsError, "Wrong Args")
 		return resp
 	}
 
 	if f, ok := r.route[request[0]]; ok {
-		resp := f(request[1:])
+		resp := &server.Response{}
+		f(request[1:], resp)
 		return resp
 	}
-	resp := api.NewResponse(api.StatusNotFound, "Wrong API")
+	resp := server.NewResponse(server.StatusNotFound, "Wrong API")
 	return resp
 }
 
@@ -41,7 +42,6 @@ func (r *Router) Add(path string, handler HandlerFunc) {
 func GetInstance() *Router {
 	once.Do(func() {
 		instance = new(Router)
-		Register(instance)
 	})
 	return instance
 }
