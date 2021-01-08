@@ -2,32 +2,62 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
-	"mint/api"
-	"mint/config"
 	"mint/route"
+	"mint/util/config"
 	"net"
+	"os"
 	"strings"
 )
 
-func init() {
-	go api.Consume()
-}
+var (
+	requireConfig = []string{"host", "port", "retry_max_time"}
+)
 
-//在消息生产后通知消费者来消费
+type (
+	App struct {
+		Address string
+		Router  *route.Router
+	}
+)
+
 func main() {
-	address := config.Read("host").(string) + ":" + config.Read("port").(string)
-	ln, err := net.Listen("tcp", address)
+	//加载配置
+	args := os.Args
+	if err := loadConfig(args); err != nil {
+		panic(err)
+	}
+	//检查必填配置
+	if err := checkConfig(); err != nil {
+		panic(err)
+	}
+
+	app := newApp()
+
+	//注册路由
+	route.Register(app.Router)
+
+	ln, err := net.Listen("tcp", app.Address)
 	if err != nil {
 		panic(err)
 	}
+	log.Println("server started successfully")
 	for {
 		conn, _ := ln.Accept()
-		go run(conn)
+		go boot(conn)
 	}
 }
 
-func run(conn net.Conn) {
+func newApp() *App {
+	app := &App{
+		Address: config.Get("host").(string) + ":" + config.Get("port").(string),
+		Router:  route.GetInstance(),
+	}
+	return app
+}
+
+func boot(conn net.Conn) {
 	defer func() {
 		_ = conn.Close()
 		log.Println(conn.RemoteAddr().String() + "断开连接")
@@ -38,13 +68,34 @@ func run(conn net.Conn) {
 		if err != nil {
 			break
 		}
+
 		request := strings.Split(string(body[:length]), " ")
 		resp := route.GetInstance().Handle(request)
-		b, _ := json.Marshal(resp)
+		buf, _ := json.Marshal(resp)
+		conn.Write(buf)
+	}
+}
 
-		_, err = conn.Write(b)
-		if err != nil {
-			log.Println(err.Error())
+func loadConfig(args []string) error {
+	wd, _ := os.Getwd()
+	var name = wd + "/config.json"
+
+	if len(args) == 2 {
+		name = args[1]
+	}
+
+	if err := config.Load(name); err != nil {
+		return err
+	}
+	return nil
+}
+
+func checkConfig() error {
+	for _, key := range requireConfig {
+		if value := config.Get(key); value == nil {
+			return errors.New("the" + key + "configuration item was not found")
 		}
 	}
+
+	return nil
 }
