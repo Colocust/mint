@@ -11,32 +11,31 @@ var (
 )
 
 type (
-	HandlerFunc func([]string, *server.Response)
+	HandlerFunc func(string, *server.Response)
 	Router      struct {
 		route map[string]HandlerFunc
 	}
 )
 
-func (r *Router) Handle(request []string) *server.Response {
+func (r *Router) Handle(request []string, resp *server.Response) {
 	if len(request) <= 1 {
-		resp := server.NewResponse(server.StatusArgsError, "Wrong Args")
-		return resp
+		resp.Code = server.StatusArgsError
+		return
 	}
-
 	if f, ok := r.route[request[0]]; ok {
-		resp := &server.Response{}
-		f(request[1:], resp)
-		return resp
+		f(request[1], resp)
+		resp.Code = server.StatusSuccess
+		return
 	}
-	resp := server.NewResponse(server.StatusNotFound, "Wrong API")
-	return resp
+	resp.Code = server.StatusNotFound
+	return
 }
 
-func (r *Router) Add(path string, handler HandlerFunc) {
+func (r *Router) Add(uri string, handler HandlerFunc) {
 	if r.route == nil {
 		r.route = make(map[string]HandlerFunc)
 	}
-	r.route[path] = handler
+	r.route[uri] = handler
 }
 
 func GetInstance() *Router {
@@ -44,4 +43,8 @@ func GetInstance() *Router {
 		instance = new(Router)
 	})
 	return instance
+}
+
+func Register(router *Router) {
+	router.Add("delay", server.Delay)
 }
