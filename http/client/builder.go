@@ -1,4 +1,4 @@
-package http
+package client
 
 type Builder struct {
 	url     string
