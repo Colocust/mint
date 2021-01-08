@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"mint/http/server"
 	"mint/route"
 	"mint/util/config"
 	"net"
@@ -70,7 +71,10 @@ func boot(conn net.Conn) {
 		}
 
 		request := strings.Split(string(body[:length]), " ")
-		resp := route.GetInstance().Handle(request)
+		resp := &server.Response{}
+
+		route.GetInstance().Handle(request, resp)
+
 		buf, _ := json.Marshal(resp)
 		conn.Write(buf)
 	}
