@@ -1,5 +1,7 @@
 package linkedList
 
+import "errors"
+
 type (
 	LinkedList struct {
 		head *Node
@@ -21,8 +23,7 @@ func NewLinkedList() *LinkedList {
 
 func (l *LinkedList) Add(index int, value interface{}) error {
 	if index < 0 || index > l.size {
-		err := NewError("wrong index")
-		return err
+		return errors.New("wrong index")
 	}
 	if index == 0 {
 		l.Unshift(value)
@@ -69,12 +70,12 @@ func (l *LinkedList) Unshift(value interface{}) {
 	return
 }
 
-func (l *LinkedList) Pop() (*Node, error) {
+func (l *LinkedList) Pop() (node *Node, err error) {
 	if l.size == 0 {
-		err := NewError("empty linkedList")
-		return nil, err
+		err = errors.New("empty linkedList")
+		return
 	}
-	node := l.tail
+	node = l.tail
 	prev := node.prev
 	if prev == nil {
 		l.head, l.tail = nil, nil
@@ -86,12 +87,12 @@ func (l *LinkedList) Pop() (*Node, error) {
 	return node, nil
 }
 
-func (l *LinkedList) Shift() (*Node, error) {
+func (l *LinkedList) Shift() (node *Node, err error) {
 	if l.size == 0 {
-		err := NewError("empty linkedList")
-		return nil, err
+		err = errors.New("empty linkedList")
+		return
 	}
-	node := l.head
+	node = l.head
 	next := node.next
 	if next == nil {
 		l.head, l.tail = nil, nil
@@ -100,13 +101,13 @@ func (l *LinkedList) Shift() (*Node, error) {
 	}
 
 	l.size--
-	return node, nil
+	return
 }
 
-func (l *LinkedList) Remove(index int) (*Node, error) {
+func (l *LinkedList) Remove(index int) (next *Node, err error) {
 	if index < 0 || index > l.size {
-		err := NewError("wrong index")
-		return nil, err
+		err = errors.New("wrong index")
+		return
 	}
 
 	if index == 0 {
@@ -121,11 +122,11 @@ func (l *LinkedList) Remove(index int) (*Node, error) {
 		prev = prev.next
 	}
 
-	next := prev.next
+	next = prev.next
 	prev.next, next.next.prev, next.next, next.prev = next.next, prev, nil, nil
 
 	l.size--
-	return next, nil
+	return
 }
 
 func (l *LinkedList) Size() int {
