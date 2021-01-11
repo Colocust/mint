@@ -1,15 +1,11 @@
 package job
 
-import (
-	"fmt"
-)
+import "mint/server/http/client"
 
 func Exec(node *Node) {
-	fmt.Println("node", node)
-	//builder := client.NewBuilder()
-	//builder.SetUrl(node.Url).SetContent(node.Content)
-	//
-	//sender := client.NewSender(builder)
-	//result, ret := sender.Send(node.Method)
-	//fmt.Println(result, ret)
+	builder := client.NewBuilder()
+	builder.SetUrl(node.Url).SetContent(node.Content)
+
+	sender := client.NewSender(builder)
+	sender.Send(node.Method)
 }

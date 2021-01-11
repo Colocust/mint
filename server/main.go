@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"mint/server/http/server"
 	"mint/server/job/delay"
@@ -45,14 +44,12 @@ func main() {
 	}
 	log.Println("server started successfully")
 	for {
-		conn, err := ln.Accept()
-		fmt.Println(err)
+		conn, _ := ln.Accept()
 		go serverBoot(conn)
 	}
 }
 
 func newApp() *App {
-	fmt.Println(config.Get("host"))
 	app := &App{
 		Address: config.Get("host").(string) + ":" + config.Get("port").(string),
 		Router:  route.GetInstance(),
@@ -66,7 +63,6 @@ func serverBoot(conn net.Conn) {
 		log.Println(conn.RemoteAddr().String() + "断开连接")
 	}()
 	for {
-		fmt.Println("ss")
 		body := make([]byte, 1024)
 		length, err := conn.Read(body)
 		if err != nil {
@@ -77,13 +73,9 @@ func serverBoot(conn net.Conn) {
 		resp := &server.Response{}
 
 		route.GetInstance().Handle(request, resp)
-		fmt.Println("ready write")
 
 		buf, _ := json.Marshal(resp)
 		_, err = conn.Write(buf)
-
-		fmt.Println(err)
-		fmt.Println("write done")
 	}
 }
 
@@ -112,7 +104,5 @@ func checkConfig() error {
 }
 
 func jobBoot() {
-	//开启delay任务
-	delayJob := delay.GetInstance()
-	delay.Boot(delayJob)
+	delay.Scan()
 }

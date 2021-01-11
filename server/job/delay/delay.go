@@ -1,7 +1,6 @@
 package delay
 
 import (
-	"fmt"
 	"mint/server/container/heap"
 	"mint/server/job"
 	"sync"
@@ -33,7 +32,8 @@ func (queue *Queue) Push(when int, n *job.Node) error {
 	return nil
 }
 
-func (queue *Queue) scan() {
+func Scan() {
+	queue := GetInstance()
 	for {
 		mutex.Lock()
 		top := queue.Top()
@@ -53,7 +53,6 @@ func exeJob(queue *Queue) {
 	if top == nil {
 		return
 	}
-	fmt.Println("exec")
 
 	job.Exec(top.Value.(*job.Node))
 }
@@ -64,8 +63,4 @@ func GetInstance() *Queue {
 		queue = &Queue{h}
 	})
 	return queue
-}
-
-func Boot(queue *Queue) {
-	queue.scan()
 }
