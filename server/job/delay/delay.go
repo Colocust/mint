@@ -1,7 +1,6 @@
 package delay
 
 import (
-	"fmt"
 	"mint/server/container/heap"
 	"mint/server/job"
 	"sync"
@@ -34,21 +33,27 @@ func (queue *Queue) Push(when int, n *job.Node) error {
 }
 
 func (queue *Queue) scan() {
-	i := 0
 	for {
 		mutex.Lock()
 		top := queue.Top()
 		mutex.Unlock()
 
 		if top != nil && int64(top.Key) <= time.Now().Unix() {
-			mutex.Lock()
-			top, _ = queue.Remove()
-			mutex.Unlock()
-
-			i++
-			fmt.Println(i)
+			exeJob(queue)
 		}
 	}
+}
+
+func exeJob(queue *Queue) {
+	mutex.Lock()
+	top, _ := queue.Remove()
+	mutex.Unlock()
+
+	if top == nil {
+		return
+	}
+
+	job.Exec(top.Value.(*job.Node))
 }
 
 func GetInstance() *Queue {
