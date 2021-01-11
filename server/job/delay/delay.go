@@ -1,6 +1,7 @@
 package delay
 
 import (
+	"fmt"
 	"mint/server/container/heap"
 	"mint/server/job"
 	"sync"
@@ -52,6 +53,7 @@ func exeJob(queue *Queue) {
 	if top == nil {
 		return
 	}
+	fmt.Println("exec")
 
 	job.Exec(top.Value.(*job.Node))
 }
