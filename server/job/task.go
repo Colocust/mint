@@ -1,7 +1,7 @@
 package job
 
 import (
-	"mint/container/linkedList"
+	"mint/server/container/linkedList"
 	"sync"
 )
 

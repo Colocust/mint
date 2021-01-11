@@ -1,5 +1,0 @@
-package job
-
-func main() {
-	
-}
