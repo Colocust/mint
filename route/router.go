@@ -1,7 +1,7 @@
 package route
 
 import (
-	"mint/server/http/server"
+	"mint/http/server"
 	"sync"
 )
 

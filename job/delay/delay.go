@@ -1,8 +1,8 @@
 package delay
 
 import (
-	"mint/server/container/heap"
-	"mint/server/job"
+	"mint/container/heap"
+	"mint/job"
 	"sync"
 	"time"
 )

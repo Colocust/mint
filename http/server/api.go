@@ -2,8 +2,8 @@ package server
 
 import (
 	"encoding/json"
-	"mint/server/job"
-	"mint/server/job/delay"
+	"mint/job"
+	"mint/job/delay"
 )
 
 func Delay(content string, resp *Response) {

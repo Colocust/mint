@@ -1,6 +1,6 @@
 package job
 
-import "mint/server/http/client"
+import "mint/http/client"
 
 func Exec(node *Node) {
 	builder := client.NewBuilder()
