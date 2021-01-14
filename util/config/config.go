@@ -34,8 +34,11 @@ func Load(name string) error {
 				}
 			}
 		}
+		if err = file.Close(); err != nil {
+			return err
+		}
 
-		if err := json.Unmarshal([]byte(configString), &config); err != nil {
+		if err = json.Unmarshal([]byte(configString), &config); err != nil {
 			return err
 		}
 
